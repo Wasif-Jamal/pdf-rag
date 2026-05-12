@@ -1,9 +1,7 @@
-from typing import Dict
-
 from fastapi import FastAPI
 
-from app.routes import health
+from app.routes.router import api_router
 
 app = FastAPI(title="pdf-rag")
 
-app.include_router(health.router)
+app.include_router(api_router)
