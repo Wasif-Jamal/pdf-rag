@@ -5,6 +5,7 @@ from fastapi import UploadFile, HTTPException
 from app.schema.document_schema import UploadResponse
 from app.ingestion.pdf_loader import load_pdf_documents
 from app.rag.chunking import chunk_documents
+from app.rag.vectorstore import add_documents_to_vectorstore
 
 RAW_DATA_DIR = "data/raw"
 
@@ -15,7 +16,8 @@ async def process_pdf_upload(file: UploadFile) -> UploadResponse:
     2. Saves the file locally to data/raw/.
     3. Loads the PDF into LangChain Documents.
     4. Chunks the documents.
-    5. Returns the processing metrics.
+    5. Generates embeddings and stores in Qdrant.
+    6. Returns the processing metrics.
     """
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
@@ -34,10 +36,14 @@ async def process_pdf_upload(file: UploadFile) -> UploadResponse:
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to save file: {str(e)}")
         
-    # Extract and chunk using LangChain
+    # Extract, chunk, and store using LangChain and Qdrant
     try:
         documents = load_pdf_documents(file_path)
         chunks = chunk_documents(documents)
+        
+        # Add to vector store
+        add_documents_to_vectorstore(chunks)
+        
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
         
@@ -46,5 +52,6 @@ async def process_pdf_upload(file: UploadFile) -> UploadResponse:
         saved_path=file_path,
         status="success",
         total_pages=len(documents),
-        total_chunks=len(chunks)
+        total_chunks=len(chunks),
+        vectorstore_status="stored"
     )

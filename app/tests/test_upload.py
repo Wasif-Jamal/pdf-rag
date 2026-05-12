@@ -7,9 +7,10 @@ from app.main import app
 
 client = TestClient(app)
 
+@patch("app.controller.upload_controller.add_documents_to_vectorstore")
 @patch("app.controller.upload_controller.load_pdf_documents")
 @patch("app.controller.upload_controller.chunk_documents")
-def test_successful_pdf_upload(mock_chunk_documents, mock_load_pdf_documents):
+def test_successful_pdf_upload(mock_chunk_documents, mock_load_pdf_documents, mock_add_vectorstore):
     """Test successful PDF upload and processing flow using LangChain."""
     mock_doc = Document(page_content="Mock content", metadata={"page": 1})
     mock_load_pdf_documents.return_value = [mock_doc]
@@ -28,6 +29,9 @@ def test_successful_pdf_upload(mock_chunk_documents, mock_load_pdf_documents):
     assert "data/raw/test.pdf" in data["saved_path"]
     assert data["total_pages"] == 1
     assert data["total_chunks"] == 1
+    assert data["vectorstore_status"] == "stored"
+    
+    mock_add_vectorstore.assert_called_once_with([mock_doc])
 
 def test_invalid_file_upload():
     """Test rejecting non-PDF files."""

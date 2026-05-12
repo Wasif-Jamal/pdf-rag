@@ -9,3 +9,4 @@ class UploadResponse(BaseModel):
     status: str
     total_pages: int
     total_chunks: int
+    vectorstore_status: str
