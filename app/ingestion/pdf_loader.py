@@ -1,17 +1,15 @@
-from pypdf import PdfReader
+from typing import List
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_core.documents import Document
 
-def load_pdf_text(file_path: str) -> str:
+def load_pdf_documents(file_path: str) -> List[Document]:
     """
-    Extracts text from all pages of a PDF file using pypdf.
-    Handles empty pages safely by only appending non-empty text.
+    Loads a PDF file and returns a list of LangChain Document objects.
+    Each document typically represents a page.
     """
     try:
-        reader = PdfReader(file_path)
-        text_parts = []
-        for page in reader.pages:
-            extracted_text = page.extract_text()
-            if extracted_text:
-                text_parts.append(extracted_text)
-        return "\n".join(text_parts)
+        loader = PyPDFLoader(file_path)
+        documents = loader.load()
+        return documents
     except Exception as e:
-        raise ValueError(f"Failed to read PDF file: {str(e)}")
+        raise ValueError(f"Failed to load PDF documents: {str(e)}")

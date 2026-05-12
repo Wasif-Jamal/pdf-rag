@@ -1,36 +1,23 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from app.ingestion.pdf_loader import load_pdf_text
+from langchain_core.documents import Document
+from app.ingestion.pdf_loader import load_pdf_documents
 
-@patch("app.ingestion.pdf_loader.PdfReader")
-def test_load_pdf_text_success(mock_pdf_reader):
-    """Test successful text extraction from PDF pages."""
-    mock_instance = mock_pdf_reader.return_value
-    mock_page_1 = MagicMock()
-    mock_page_1.extract_text.return_value = "Page 1 text."
-    mock_page_2 = MagicMock()
-    mock_page_2.extract_text.return_value = "Page 2 text."
+@patch("app.ingestion.pdf_loader.PyPDFLoader")
+def test_load_pdf_documents_success(mock_pypdf_loader):
+    """Test successful LangChain document loading."""
+    mock_instance = mock_pypdf_loader.return_value
+    mock_instance.load.return_value = [
+        Document(page_content="Page 1 text", metadata={"page": 1}),
+        Document(page_content="Page 2 text", metadata={"page": 2})
+    ]
     
-    mock_instance.pages = [mock_page_1, mock_page_2]
-    
-    result = load_pdf_text("dummy.pdf")
-    assert result == "Page 1 text.\nPage 2 text."
+    documents = load_pdf_documents("dummy.pdf")
+    assert len(documents) == 2
+    assert documents[0].page_content == "Page 1 text"
+    assert documents[1].metadata["page"] == 2
 
-@patch("app.ingestion.pdf_loader.PdfReader")
-def test_load_pdf_text_empty_pages(mock_pdf_reader):
-    """Test text extraction skips empty pages."""
-    mock_instance = mock_pdf_reader.return_value
-    mock_page_1 = MagicMock()
-    mock_page_1.extract_text.return_value = ""
-    mock_page_2 = MagicMock()
-    mock_page_2.extract_text.return_value = "Page 2 text."
-    
-    mock_instance.pages = [mock_page_1, mock_page_2]
-    
-    result = load_pdf_text("dummy.pdf")
-    assert result == "Page 2 text."
-
-def test_load_pdf_text_error():
-    """Test error handling for non-existent PDF."""
+def test_load_pdf_documents_error():
+    """Test error handling for invalid PDF paths."""
     with pytest.raises(ValueError):
-        load_pdf_text("non_existent.pdf")
+        load_pdf_documents("non_existent.pdf")

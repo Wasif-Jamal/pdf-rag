@@ -7,5 +7,5 @@ class UploadResponse(BaseModel):
     filename: str
     saved_path: str
     status: str
-    total_characters: int
+    total_pages: int
     total_chunks: int

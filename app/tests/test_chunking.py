@@ -1,20 +1,23 @@
-from app.rag.chunking import chunk_text
+from langchain_core.documents import Document
+from app.rag.chunking import chunk_documents
 
-def test_chunk_text_empty():
-    """Test chunking with empty text."""
-    assert chunk_text("") == []
+def test_chunk_documents_empty():
+    """Test chunking with empty documents list."""
+    assert chunk_documents([]) == []
 
-def test_chunk_text_short():
+def test_chunk_documents_short():
     """Test chunking with text shorter than chunk size."""
-    text = "Short text"
-    chunks = chunk_text(text)
+    docs = [Document(page_content="Short text", metadata={"source": "test.pdf"})]
+    chunks = chunk_documents(docs)
     assert len(chunks) == 1
-    assert chunks[0] == text
+    assert chunks[0].page_content == "Short text"
 
-def test_chunk_text_long():
+def test_chunk_documents_long():
     """Test chunking with text longer than chunk size to verify overlap."""
     text = "A" * 1500
-    chunks = chunk_text(text)
+    docs = [Document(page_content=text, metadata={"source": "test.pdf"})]
+    chunks = chunk_documents(docs)
+    
     assert len(chunks) == 2
-    assert len(chunks[0]) == 1000
-    assert len(chunks[1]) == 700
+    assert len(chunks[0].page_content) == 1000
+    assert len(chunks[1].page_content) == 700
