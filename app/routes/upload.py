@@ -1,9 +1,8 @@
 from fastapi import APIRouter, File, UploadFile
-
 from app.schema.document_schema import UploadResponse
 from app.services.upload_service import upload_service
 
-router = APIRouter()
+router = APIRouter(tags=["ingestion"])
 
 @router.post("/upload", response_model=UploadResponse)
 async def upload_pdf(file: UploadFile = File(...)) -> UploadResponse:

@@ -1,6 +1,9 @@
 from typing import List
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from app.utils.logger import Logger
+
+logger = Logger.get_logger(__name__)
 
 class ChunkingService:
     """
@@ -18,7 +21,10 @@ class ChunkingService:
         """
         Splits LangChain documents into smaller chunks.
         """
-        return self.text_splitter.split_documents(documents)
+        logger.info(f"Chunking {len(documents)} pages...")
+        chunks = self.text_splitter.split_documents(documents)
+        logger.info(f"Created {len(chunks)} chunks.")
+        return chunks
 
 # Create a singleton instance
 chunking_service = ChunkingService()

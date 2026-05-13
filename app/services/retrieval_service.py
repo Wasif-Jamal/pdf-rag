@@ -1,6 +1,9 @@
 from fastapi import HTTPException
 from app.schema.chat_schema import RetrievalRequest, RetrievalResponse, RetrievedDocument
 from app.services.vectorstore_service import VectorStoreService, vectorstore_service
+from app.utils.logger import Logger
+
+logger = Logger.get_logger(__name__)
 
 class RetrievalService:
     """
@@ -13,6 +16,7 @@ class RetrievalService:
         """
         Handles semantic retrieval of documents.
         """
+        logger.info(f"Retrieval request: query='{request.query}', k={request.k}")
         try:
             docs = self.vectorstore_svc.similarity_search(query=request.query, k=request.k)
             
@@ -29,7 +33,8 @@ class RetrievalService:
                 results=results
             )
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Error during retrieval: {str(e)}")
+            logger.error(f"Retrieval failed: {str(e)}")
+            raise HTTPException(status_code=500, detail="Retrieval engine error.")
 
 # Create a singleton instance
 retrieval_service = RetrievalService()

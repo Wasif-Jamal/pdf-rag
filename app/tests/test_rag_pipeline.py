@@ -7,9 +7,9 @@ from app.schema.chat_schema import ChatRequest
 
 @pytest.mark.anyio
 @patch("app.services.vectorstore_service.VectorStoreService.similarity_search")
-@patch("app.services.rag_service.get_llm")
+@patch("app.services.llm_service.LLMService.get_llm")
 async def test_rag_service_generate_response(mock_get_llm, mock_similarity_search):
-    """Test the complete RAG service logic."""
+    """Test the complete RAG service logic with mocked LLM service."""
     # 1. Mock retrieval
     mock_similarity_search.return_value = [
         Document(page_content="This is a test context about AI.", metadata={"source": "test.pdf"})

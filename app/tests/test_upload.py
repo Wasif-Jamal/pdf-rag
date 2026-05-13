@@ -41,4 +41,4 @@ def test_invalid_file_upload():
     )
     
     assert response.status_code == 400
-    assert response.json()["detail"] == "Only PDF files are allowed"
+    assert "Only PDF is allowed" in response.json()["detail"]

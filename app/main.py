@@ -1,7 +1,3 @@
-from fastapi import FastAPI
+from app.starter import AppStarter
 
-from app.routes.router import api_router
-
-app = FastAPI(title="pdf-rag")
-
-app.include_router(api_router)
+app = AppStarter().create_app()

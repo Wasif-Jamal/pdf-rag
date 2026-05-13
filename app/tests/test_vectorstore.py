@@ -1,6 +1,7 @@
 from unittest.mock import patch, MagicMock
 from langchain_core.documents import Document
 from app.services.vectorstore_service import VectorStoreService
+from app.config.env_config import config
 
 @patch("app.services.vectorstore_service.QdrantClient")
 @patch("app.services.vectorstore_service.QdrantVectorStore")
