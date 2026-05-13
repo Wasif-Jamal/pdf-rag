@@ -20,7 +20,7 @@ async def test_rag_service_generate_response(mock_get_llm, mock_similarity_searc
     
     # 3. Call service
     service = RAGService()
-    request = ChatRequest(query="What is AI?")
+    request = ChatRequest(session_id="550e8400-e29b-41d4-a716-446655440000", query="What is AI?")
     response = await service.generate_response(request)
     
     # 4. Assertions

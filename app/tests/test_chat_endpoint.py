@@ -19,7 +19,7 @@ async def test_chat_endpoint(mock_generate_response):
         total_sources=1
     )
     
-    response = client.post("/chat", json={"query": "Hello?"})
+    response = client.post("/chat", json={"session_id": "550e8400-e29b-41d4-a716-446655440000", "query": "Hello?"})
     
     assert response.status_code == 200
     data = response.json()
@@ -32,6 +32,6 @@ from fastapi import HTTPException
 def test_chat_endpoint_error():
     """Test error handling in /chat endpoint."""
     with patch("app.routes.chat.rag_service.generate_response", side_effect=HTTPException(status_code=500, detail="Service failure")):
-        response = client.post("/chat", json={"query": "Hello?"})
+        response = client.post("/chat", json={"session_id": "550e8400-e29b-41d4-a716-446655440000", "query": "Hello?"})
         assert response.status_code == 500
         assert "Service failure" in response.json()["detail"]

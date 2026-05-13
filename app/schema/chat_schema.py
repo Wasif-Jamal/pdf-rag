@@ -18,6 +18,7 @@ class RetrievalResponse(BaseModel):
 
 class ChatRequest(BaseModel):
     """Schema for a chat request."""
+    session_id: str
     query: str
 
 class ChatSource(BaseModel):
