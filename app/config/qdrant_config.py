@@ -1,4 +1,7 @@
 from qdrant_client import QdrantClient
+
+import os
+
 from app.config.env_config import config
 from app.config.log_config import LogConfig
 
@@ -10,6 +13,10 @@ class QdrantConfig:
     """
     def __init__(self):
         self._client = None
+        self.qdrant_url = os.getenv(
+            "QDRANT_URL",
+            "http://localhost:6333",
+        )
 
     def get_client(self) -> QdrantClient:
         """

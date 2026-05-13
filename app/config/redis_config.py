@@ -2,12 +2,17 @@ from functools import lru_cache
 
 from redis.asyncio import Redis
 
+import os
+
 
 class RedisConfig:
     """Centralized Redis configuration."""
 
     def __init__(self) -> None:
-        self.redis_url = "redis://localhost:6379/0"
+        self.redis_url = os.getenv(
+            "REDIS_URL",
+            "redis://localhost:6379/0",
+        )
 
     def get_client(self) -> Redis:
         return Redis.from_url(
