@@ -15,3 +15,18 @@ class RetrievalResponse(BaseModel):
     """Schema for the response of a retrieval query."""
     query: str
     results: List[RetrievedDocument]
+
+class ChatRequest(BaseModel):
+    """Schema for a chat request."""
+    query: str
+
+class ChatSource(BaseModel):
+    """Schema for a source in chat response."""
+    content: str
+    metadata: dict
+
+class ChatResponse(BaseModel):
+    """Schema for the chat response."""
+    answer: str
+    retrieved_sources: List[ChatSource]
+    total_sources: int
