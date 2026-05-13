@@ -1,9 +1,8 @@
-import os
 from langchain_google_genai import ChatGoogleGenerativeAI
 from app.config.env_config import config
-from app.utils.logger import Logger
+from app.config.log_config import LogConfig
 
-logger = Logger.get_logger(__name__)
+logger = LogConfig.get_logger(__name__)
 
 class LLMService:
     """
@@ -19,8 +18,7 @@ class LLMService:
         if self._llm is None:
             api_key = config.GOOGLE_API_KEY
             if not api_key:
-                logger.error("GOOGLE_API_KEY is missing from configuration")
-                raise ValueError("GOOGLE_API_KEY not found in environment variables")
+                raise ValueError("GOOGLE_API_KEY not found")
             
             logger.info(f"Initializing LLM: {config.GEMINI_MODEL_NAME}")
             self._llm = ChatGoogleGenerativeAI(

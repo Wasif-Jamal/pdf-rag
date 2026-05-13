@@ -1,13 +1,12 @@
 from unittest.mock import patch, MagicMock
 from langchain_core.documents import Document
 from app.services.vectorstore_service import VectorStoreService
-from app.config.env_config import config
 
-@patch("app.services.vectorstore_service.QdrantClient")
+@patch("app.services.vectorstore_service.qdrant_config.get_client")
 @patch("app.services.vectorstore_service.QdrantVectorStore")
-def test_vectorstore_initialization(mock_qdrant_store, mock_client):
+def test_vectorstore_initialization(mock_qdrant_store, mock_get_client):
     """Test vectorstore initialization logic within the service."""
-    mock_client_instance = mock_client.return_value
+    mock_client_instance = mock_get_client.return_value
     mock_client_instance.collection_exists.return_value = True
     
     mock_embedding_svc = MagicMock()
@@ -17,9 +16,9 @@ def test_vectorstore_initialization(mock_qdrant_store, mock_client):
     mock_qdrant_store.assert_called_once()
     assert vs == mock_qdrant_store.return_value
 
-@patch("app.services.vectorstore_service.QdrantClient")
-def test_add_documents_to_vectorstore(mock_client):
-    """Test adding documents via VectorStoreService with mocked client."""
+@patch("app.services.vectorstore_service.qdrant_config.get_client")
+def test_add_documents_to_vectorstore(mock_get_client):
+    """Test adding documents via VectorStoreService."""
     mock_vs = MagicMock()
     service = VectorStoreService()
     service._vectorstore = mock_vs

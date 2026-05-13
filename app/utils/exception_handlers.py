@@ -1,8 +1,8 @@
 from fastapi import Request, HTTPException
 from fastapi.responses import JSONResponse
-from app.utils.logger import Logger
+from app.config.log_config import LogConfig
 
-logger = Logger.get_logger(__name__)
+logger = LogConfig.get_logger(__name__)
 
 async def global_exception_handler(request: Request, exc: Exception):
     """

@@ -1,22 +1,23 @@
 import logging
 import sys
 
-class Logger:
+class LogConfig:
     """
-    Centralized logger for the application.
+    Centralized logging configuration.
     """
     @staticmethod
     def get_logger(name: str) -> logging.Logger:
+        """
+        Returns a configured logger instance.
+        """
         logger = logging.getLogger(name)
         if not logger.handlers:
             logger.setLevel(logging.INFO)
             
-            # Formatter
             formatter = logging.Formatter(
                 "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
             )
             
-            # Console Handler
             handler = logging.StreamHandler(sys.stdout)
             handler.setFormatter(formatter)
             logger.addHandler(handler)

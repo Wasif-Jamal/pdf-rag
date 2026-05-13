@@ -1,8 +1,8 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from app.config.env_config import config
-from app.utils.logger import Logger
+from app.config.log_config import LogConfig
 
-logger = Logger.get_logger(__name__)
+logger = LogConfig.get_logger(__name__)
 
 class EmbeddingService:
     """
@@ -19,7 +19,6 @@ class EmbeddingService:
         if self._model is None:
             logger.info(f"Loading embedding model: {config.EMBEDDING_MODEL_NAME}")
             self._model = HuggingFaceEmbeddings(model_name=config.EMBEDDING_MODEL_NAME)
-            logger.info("Embedding model loaded successfully.")
         return self._model
 
 # Create a singleton instance

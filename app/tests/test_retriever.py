@@ -2,9 +2,9 @@ from unittest.mock import patch, MagicMock
 from langchain_core.documents import Document
 from app.services.vectorstore_service import VectorStoreService
 
-@patch("app.services.vectorstore_service.QdrantClient")
+@patch("app.services.vectorstore_service.qdrant_config.get_client")
 @patch("app.services.vectorstore_service.QdrantVectorStore")
-def test_vectorstore_similarity_search(mock_qdrant_vs, mock_qdrant_client):
+def test_vectorstore_similarity_search(mock_qdrant_vs, mock_get_client):
     """Test document retrieval through VectorStoreService."""
     mock_embedding_svc = MagicMock()
     service = VectorStoreService(embedding_svc=mock_embedding_svc)
