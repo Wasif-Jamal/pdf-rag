@@ -1,10 +1,11 @@
 from unittest.mock import patch
-from app.rag.embeddings import get_embedding_model
+from app.services.embedding_service import EmbeddingService
 
-@patch("app.rag.embeddings.HuggingFaceEmbeddings")
+@patch("app.services.embedding_service.HuggingFaceEmbeddings")
 def test_get_embedding_model(mock_hf_embeddings):
     """Test embedding model initialization."""
-    model = get_embedding_model()
+    service = EmbeddingService()
+    model = service.get_model()
     mock_hf_embeddings.assert_called_once_with(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )

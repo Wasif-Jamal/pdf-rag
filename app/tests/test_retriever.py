@@ -1,17 +1,19 @@
 from unittest.mock import patch, MagicMock
 from langchain_core.documents import Document
-from app.rag.retriever import retrieve_documents
+from app.services.vectorstore_service import VectorStoreService
 
-@patch("app.rag.retriever.get_vectorstore")
-def test_retrieve_documents(mock_get_vectorstore):
-    """Test document retrieval."""
-    mock_vs = MagicMock()
-    mock_get_vectorstore.return_value = mock_vs
+@patch("app.services.vectorstore_service.QdrantClient")
+@patch("app.services.vectorstore_service.QdrantVectorStore")
+def test_vectorstore_similarity_search(mock_qdrant_vs, mock_qdrant_client):
+    """Test document retrieval through VectorStoreService."""
+    mock_embedding_svc = MagicMock()
+    service = VectorStoreService(embedding_svc=mock_embedding_svc)
     
+    mock_vs_instance = mock_qdrant_vs.return_value
     mock_docs = [Document(page_content="result", metadata={})]
-    mock_vs.similarity_search.return_value = mock_docs
+    mock_vs_instance.similarity_search.return_value = mock_docs
     
-    results = retrieve_documents("query", k=2)
+    results = service.similarity_search("query", k=2)
     
-    mock_vs.similarity_search.assert_called_once_with(query="query", k=2)
+    mock_vs_instance.similarity_search.assert_called_once_with(query="query", k=2)
     assert results == mock_docs

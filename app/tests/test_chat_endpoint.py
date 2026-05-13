@@ -2,20 +2,22 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 from app.main import app
+from app.schema.chat_schema import ChatResponse, ChatSource
 
-client = TestClient(app)
+client = TestClient(app, raise_server_exceptions=False)
 
-@patch("app.controller.chat_controller.generate_rag_response")
-def test_chat_endpoint(mock_rag_pipeline):
+@pytest.mark.anyio
+@patch("app.routes.chat.rag_service.generate_response")
+async def test_chat_endpoint(mock_generate_response):
     """Test the POST /chat endpoint."""
-    # Mock pipeline response
-    mock_rag_pipeline.return_value = {
-        "answer": "This is a mocked answer.",
-        "retrieved_sources": [
-            {"content": "Source context", "metadata": {"page": 1}}
+    # Mock service response
+    mock_generate_response.return_value = ChatResponse(
+        answer="This is a mocked answer.",
+        retrieved_sources=[
+            ChatSource(content="Source context", metadata={"page": 1})
         ],
-        "total_sources": 1
-    }
+        total_sources=1
+    )
     
     response = client.post("/chat", json={"query": "Hello?"})
     
@@ -25,9 +27,11 @@ def test_chat_endpoint(mock_rag_pipeline):
     assert len(data["retrieved_sources"]) == 1
     assert data["total_sources"] == 1
 
+from fastapi import HTTPException
+
 def test_chat_endpoint_error():
     """Test error handling in /chat endpoint."""
-    with patch("app.controller.chat_controller.generate_rag_response", side_effect=Exception("Pipeline failure")):
+    with patch("app.routes.chat.rag_service.generate_response", side_effect=HTTPException(status_code=500, detail="Service failure")):
         response = client.post("/chat", json={"query": "Hello?"})
         assert response.status_code == 500
-        assert "Pipeline failure" in response.json()["detail"]
+        assert "Service failure" in response.json()["detail"]

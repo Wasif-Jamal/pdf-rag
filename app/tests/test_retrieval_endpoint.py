@@ -1,16 +1,21 @@
+import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
-from langchain_core.documents import Document
 from app.main import app
+from app.schema.chat_schema import RetrievalResponse, RetrievedDocument
 
 client = TestClient(app)
 
-@patch("app.controller.retrieval_controller.retrieve_documents")
-def test_successful_retrieval(mock_retrieve_documents):
+@pytest.mark.anyio
+@patch("app.routes.retrieval.retrieval_service.retrieve")
+async def test_successful_retrieval(mock_retrieve):
     """Test successful retrieval endpoint."""
-    mock_retrieve_documents.return_value = [
-        Document(page_content="Test content", metadata={"page": 1})
-    ]
+    mock_retrieve.return_value = RetrievalResponse(
+        query="test query",
+        results=[
+            RetrievedDocument(content="Test content", metadata={"page": 1})
+        ]
+    )
     
     response = client.post(
         "/retrieve",

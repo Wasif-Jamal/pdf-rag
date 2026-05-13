@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.schema.chat_schema import RetrievalRequest, RetrievalResponse
-from app.controller.retrieval_controller import process_retrieval
+from app.services.retrieval_service import retrieval_service
 
 router = APIRouter()
 
@@ -9,4 +9,4 @@ async def retrieve_documents_endpoint(request: RetrievalRequest) -> RetrievalRes
     """
     Endpoint to retrieve relevant document chunks based on a query.
     """
-    return await process_retrieval(request)
+    return await retrieval_service.retrieve(request)
