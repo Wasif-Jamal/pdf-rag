@@ -10,7 +10,7 @@ services:
       - redis
       - qdrant
     volumes:
-      - .:/app
+      - ./app:/app/app
 
   redis:
     image: redis:7

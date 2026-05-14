@@ -19,7 +19,9 @@ dependencies = [
     "python-multipart>=0.0.28",
     "qdrant-client>=1.18.0",
     "redis>=7.4.0",
+    "requests>=2.34.0",
     "sentence-transformers>=5.5.0",
+    "streamlit>=1.57.0",
     "uvicorn>=0.46.0",
 ]
 
