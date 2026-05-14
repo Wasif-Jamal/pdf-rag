@@ -14,12 +14,18 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "uploaded_file_name" not in st.session_state:
+    st.session_state.uploaded_file_name = None
+
 uploaded_file = st.file_uploader(
     "Upload PDF",
     type=["pdf"],
 )
 
-if uploaded_file:
+if (
+    uploaded_file
+    and uploaded_file.name != st.session_state.uploaded_file_name
+):
     with st.spinner("Uploading PDF..."):
         files = {
             "file": (
@@ -35,6 +41,7 @@ if uploaded_file:
         )
 
         if response.ok:
+            st.session_state.uploaded_file_name = uploaded_file.name
             st.success("PDF uploaded successfully.")
         else:
             st.error("Upload failed.")
