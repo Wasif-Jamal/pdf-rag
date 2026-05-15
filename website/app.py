@@ -4,7 +4,10 @@ import streamlit as st
 
 API_BASE_URL = "http://localhost:8000"
 
-st.set_page_config(page_title="PDF RAG")
+st.set_page_config(
+    page_title="PDF RAG",
+    layout="wide"
+)
 
 st.title("PDF RAG Chat")
 
